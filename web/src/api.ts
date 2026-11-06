@@ -61,6 +61,14 @@ export interface FeedCard {
   score: { total: number; proximity: number; experience: number; shared: number }
 }
 
+export interface Insight {
+  source: 'claude' | 'rules'
+  commonGround: string[]
+  relevantExperience: { title: string; why: string }[]
+}
+
+export type Slot = { day: string; block: string }
+
 export interface CreateUserBody {
   basics: {
     firstName: string; lastName: string; email: string; password: string; zip: string; birthYear: number
@@ -137,6 +145,13 @@ export const api = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ targetUserId, direction }),
+    }),
+  getInsight: (userId: number) => request<Insight>(`/requests/insight/${userId}`),
+  sendRequest: (body: { toUserId: number; message: string; availability: Slot[] }) =>
+    request<{ id: number }>('/requests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
     }),
   undoSwipe: (targetUserId: number) => request<{ ok: true }>(`/swipes/${targetUserId}`, { method: 'DELETE' }),
   createUser: (body: CreateUserBody) =>

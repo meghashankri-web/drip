@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Alert, Box, Button, Skeleton, Snackbar, Stack, Typography } from '@mui/material'
 import LocalCafeOutlinedIcon from '@mui/icons-material/LocalCafeOutlined'
 import { api, type FeedCard } from '../api'
@@ -19,9 +19,11 @@ export default function FeedPage() {
 
 function Feed() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [load, setLoad] = useState<Load>({ status: 'loading' })
   const [undo, setUndo] = useState<{ card: FeedCard; index: number } | null>(null)
-  const [toast, setToast] = useState<string | null>(null)
+  const sentTo = (location.state as { sentTo?: string } | null)?.sentTo
+  const [toast, setToast] = useState<string | null>(sentTo ? `Request sent to ${sentTo} ☕` : null)
 
   const fetchFeed = useCallback(() => {
     let cancelled = false

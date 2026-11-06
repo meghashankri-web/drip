@@ -23,7 +23,7 @@ export default function AppLayout() {
   const navigate = useNavigate()
   const currentUserId = useSession((s) => s.currentUserId)
   // Profiles use two columns on larger screens, so their column (and the top bar) is wider.
-  const wide = location.pathname === '/profile' || location.pathname.startsWith('/profile/')
+  const wide = location.pathname === '/profile' || location.pathname.startsWith('/profile/') || location.pathname.startsWith('/feed/request/')
   const maxWidth = wide ? { xs: CONTENT_MAX_WIDTH, md: WIDE_CONTENT_MAX_WIDTH } : CONTENT_MAX_WIDTH
 
   const activeTab = TABS.findIndex((t) => location.pathname === t.path || location.pathname.startsWith(`${t.path}/`))
