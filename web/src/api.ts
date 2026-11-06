@@ -81,6 +81,12 @@ export const api = {
     body.append('resume', file)
     return request<ResumeAnalysis>('/resume/analyze', { method: 'POST', body })
   },
+  suggestInterests: (body: { experienceTags: string[]; careerStage: CareerStage; summary?: string }) =>
+    request<{ suggestions: string[]; source: 'claude' | 'static' }>('/interests/suggest', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
   emailAvailable: (email: string) =>
     request<{ available: boolean }>(`/users/email-available?email=${encodeURIComponent(email)}`),
 }

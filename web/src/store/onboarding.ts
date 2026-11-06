@@ -41,12 +41,24 @@ export interface ResumeDraft {
   resumeText: string
 }
 
+/** Cached interest suggestions, keyed by the inputs that produced them. */
+export interface InterestSuggestions {
+  key: string
+  items: string[]
+  source: 'claude' | 'static'
+}
+
 interface OnboardingState {
   basics: BasicsDraft
   resume: ResumeDraft | null
+  /** Sign-up Step 3: what she wants to learn, in rank order (index 0 = rank 1). */
+  interests: string[]
+  interestSuggestions: InterestSuggestions | null
   setBasics: (patch: Partial<BasicsDraft>) => void
   setResume: (resume: ResumeDraft | null) => void
   updateResume: (patch: Partial<ResumeDraft>) => void
+  setInterests: (interests: string[]) => void
+  setInterestSuggestions: (s: InterestSuggestions | null) => void
   reset: () => void
 }
 
@@ -59,10 +71,14 @@ export const useOnboarding = create<OnboardingState>()(
     (set) => ({
       basics: emptyBasics,
       resume: null,
+      interests: [],
+      interestSuggestions: null,
       setBasics: (patch) => set((s) => ({ basics: { ...s.basics, ...patch } })),
       setResume: (resume) => set({ resume }),
       updateResume: (patch) => set((s) => (s.resume ? { resume: { ...s.resume, ...patch } } : s)),
-      reset: () => set({ basics: emptyBasics, resume: null }),
+      setInterests: (interests) => set({ interests }),
+      setInterestSuggestions: (interestSuggestions) => set({ interestSuggestions }),
+      reset: () => set({ basics: emptyBasics, resume: null, interests: [], interestSuggestions: null }),
     }),
     { name: 'drip-onboarding', storage: createJSONStorage(() => sessionStorage) },
   ),
