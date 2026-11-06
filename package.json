@@ -1,0 +1,14 @@
+{
+  "name": "drip",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently -n server,web -c magenta,cyan \"npm --prefix server run dev\" \"npm --prefix web run dev\"",
+    "typecheck": "npm --prefix server run typecheck && npm --prefix web run typecheck",
+    "db:reset": "npm --prefix server run db:reset"
+  },
+  "type": "commonjs",
+  "devDependencies": {
+    "concurrently": "^10.0.6"
+  },
+  "private": true
+}
