@@ -42,6 +42,22 @@ export interface Post {
   cheersCount?: number
 }
 
+export interface FeedCard {
+  id: number
+  firstName: string
+  lastName: string
+  photoUrl: string | null
+  careerStage: CareerStage
+  raceCulture: string | null
+  meetingPref: MeetingPref
+  city: string | null
+  state: string | null
+  distanceMiles: number | null
+  experienceTags: string[]
+  interestTags: string[]
+  funFact: { label: string; text: string } | null
+}
+
 export interface CreateUserBody {
   basics: {
     firstName: string; lastName: string; email: string; password: string; zip: string; birthYear: number
@@ -112,6 +128,14 @@ export const api = {
   listUsers: () => request<UserSummary[]>('/users'),
   getUser: (id: number) => request<UserProfile>(`/users/${id}`),
   listPosts: (authorId: number) => request<Post[]>(`/users/${authorId}/posts`),
+  getFeed: () => request<{ cards: FeedCard[]; remaining: number }>('/feed'),
+  swipe: (targetUserId: number, direction: 'left' | 'right') =>
+    request<{ ok: true }>('/swipes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ targetUserId, direction }),
+    }),
+  undoSwipe: (targetUserId: number) => request<{ ok: true }>(`/swipes/${targetUserId}`, { method: 'DELETE' }),
   createUser: (body: CreateUserBody) =>
     request<{ id: number }>('/users', {
       method: 'POST',

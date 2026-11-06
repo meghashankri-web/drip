@@ -7,6 +7,7 @@ import MessagesPage from './pages/MessagesPage'
 import ProfilePage from './pages/ProfilePage'
 import SignupStepPage from './pages/SignupStepPage'
 import NotFoundPage from './pages/NotFoundPage'
+import RequestPage from './pages/RequestPage'
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
       </Route>
       <Route element={<AppLayout />}>
         <Route path="feed" element={<FeedPage />} />
+        <Route path="feed/request/:userId" element={<RequestPage />} />
         <Route path="ripple" element={<RipplePage />} />
         <Route path="messages" element={<MessagesPage />} />
         <Route path="profile" element={<ProfilePage />} />

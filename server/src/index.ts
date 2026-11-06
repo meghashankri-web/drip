@@ -7,6 +7,7 @@ import { usersRouter } from './routes/users.js'
 import { zipsRouter } from './routes/zips.js'
 import { resumeErrorHandler, resumeRouter } from './routes/resume.js'
 import { interestsRouter } from './routes/interests.js'
+import { feedRouter } from './routes/feed.js'
 
 fs.mkdirSync(UPLOADS_DIR, { recursive: true })
 const db = openDb()
@@ -25,6 +26,7 @@ app.use('/api/users', usersRouter(db))
 app.use('/api/zips', zipsRouter(db))
 app.use('/api/resume', resumeRouter(), resumeErrorHandler)
 app.use('/api/interests', interestsRouter(db))
+app.use('/api', feedRouter(db))
 
 app.use('/api', (_req, res) => {
   res.status(404).json({ error: 'Not found' })
