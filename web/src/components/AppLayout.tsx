@@ -8,7 +8,7 @@ import Logo from './Logo'
 import ProfileSwitcher from './ProfileSwitcher'
 import ChooseProfile from './ChooseProfile'
 import { useSession } from '../store/session'
-import { CONTENT_MAX_WIDTH } from '../constants'
+import { CONTENT_MAX_WIDTH, WIDE_CONTENT_MAX_WIDTH } from '../constants'
 
 const TABS = [
   { label: 'Feed', path: '/feed', icon: <LocalCafeOutlinedIcon /> },
@@ -22,13 +22,16 @@ export default function AppLayout() {
   const location = useLocation()
   const navigate = useNavigate()
   const currentUserId = useSession((s) => s.currentUserId)
+  // Profiles use two columns on larger screens, so their column (and the top bar) is wider.
+  const wide = location.pathname === '/profile' || location.pathname.startsWith('/profile/')
+  const maxWidth = wide ? { xs: CONTENT_MAX_WIDTH, md: WIDE_CONTENT_MAX_WIDTH } : CONTENT_MAX_WIDTH
 
   const activeTab = TABS.findIndex((t) => location.pathname === t.path || location.pathname.startsWith(`${t.path}/`))
 
   return (
     <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
       <AppBar position="sticky" color="primary">
-        <Toolbar sx={{ maxWidth: CONTENT_MAX_WIDTH, width: '100%', mx: 'auto', px: { xs: 2 }, minHeight: { xs: 84 } }}>
+        <Toolbar sx={{ maxWidth, width: '100%', mx: 'auto', px: { xs: 2 }, minHeight: { xs: 84 } }}>
           <Box component={RouterLink} to="/feed" aria-label="Drip home" sx={{ display: 'flex' }}>
             <Logo height={60} />
           </Box>
@@ -39,7 +42,7 @@ export default function AppLayout() {
 
       <Box
         component="main"
-        sx={{ flexGrow: 1, width: '100%', maxWidth: CONTENT_MAX_WIDTH, mx: 'auto', px: 2, pt: 2, pb: 12 }}
+        sx={{ flexGrow: 1, width: '100%', maxWidth, mx: 'auto', px: { xs: 2, md: 3 }, pt: { xs: 2, md: 4 }, pb: 12 }}
       >
         {currentUserId === null ? <ChooseProfile /> : <Outlet />}
       </Box>

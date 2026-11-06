@@ -8,6 +8,7 @@ import BasicsStep from '../signup/BasicsStep'
 import ResumeStep from '../signup/ResumeStep'
 import InterestsStep from '../signup/InterestsStep'
 import PersonalityStep from '../signup/PersonalityStep'
+import CreateAccountStep from '../signup/CreateAccountStep'
 import { validatePersonality } from '../signup/personality'
 import { isBasicsFilled, isResumeComplete } from '../signup/resume'
 import { useOnboarding } from '../store/onboarding'
@@ -18,7 +19,7 @@ const STEP_INFO: Record<number, { title: string; subtitle?: string; buildStep: n
   2: { title: 'Your resume & experience', subtitle: 'Upload your resume and Claude will draft your profile. You stay in control of every word.', buildStep: 4 },
   3: { title: 'What do you want to explore or get help with?', buildStep: 5 },
   4: { title: 'Personality & meeting preferences', subtitle: 'A little about you, and how you like to meet.', buildStep: 6 },
-  5: { title: 'Review & create account', buildStep: 7 },
+  5: { title: 'Review & create account', subtitle: 'Check everything looks right. You can edit any section.', buildStep: 7 },
 }
 
 /** Square step marker to match Drip's sharp-edged style. */
@@ -93,7 +94,7 @@ export default function SignupStepPage() {
         </Typography>
         {info.subtitle && <Typography color="text.secondary">{info.subtitle}</Typography>}
       </Stack>
-      {step === 1 ? <BasicsStep /> : step === 2 ? <ResumeStep /> : step === 3 ? <InterestsStep /> : step === 4 ? <PersonalityStep /> : (
+      {step === 1 ? <BasicsStep /> : step === 2 ? <ResumeStep /> : step === 3 ? <InterestsStep /> : step === 4 ? <PersonalityStep /> : step === 5 ? <CreateAccountStep /> : (
         <ComingSoon step={step} buildStep={info.buildStep} />
       )}
     </Stack>

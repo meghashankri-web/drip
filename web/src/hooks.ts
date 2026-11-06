@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { api, ApiError, type UserProfile, type UserSummary } from './api'
+import { api, ApiError, type Post, type UserProfile, type UserSummary } from './api'
 import { useSession } from './store/session'
 
 export type Loadable<T> = { data: T | null; loading: boolean; error: string | null; notFound: boolean }
@@ -36,8 +36,13 @@ function useLoad<T>(key: string | null, load: () => Promise<T>): Loadable<T> {
   return state
 }
 
-export function useUser(id: number | null): Loadable<UserProfile> {
-  return useLoad(id === null ? null : `user:${id}`, () => api.getUser(id!))
+export function useUser(id: number | null, refreshKey = 0): Loadable<UserProfile> {
+  return useLoad(id === null ? null : `user:${id}:${refreshKey}`, () => api.getUser(id!))
+}
+
+export function usePosts(authorId: number | null, viewerId: number | null): Loadable<Post[]> {
+  // The viewer is part of the key: whether cheers totals are visible depends on who is looking.
+  return useLoad(authorId === null ? null : `posts:${authorId}:${viewerId}`, () => api.listPosts(authorId!))
 }
 
 /** The signed-in user. Clears the session if that user no longer exists (e.g. after a demo reset). */
