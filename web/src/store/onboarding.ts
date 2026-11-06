@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import type { CareerStage } from '../api'
+import type { CareerStage, MeetingPref } from '../api'
+import { clampChats } from '../signup/personality'
 
 /** Sign-up Step 1 answers. */
 export interface BasicsDraft {
@@ -41,6 +42,25 @@ export interface ResumeDraft {
   resumeText: string
 }
 
+/** Sign-up Step 4: personality questions and meeting preferences. */
+export interface PersonalityDraft {
+  hobbies: string
+  bestAdvice: string
+  womanAdmired: string
+  askMeAbout: string
+  meetingPref: MeetingPref | null
+  chatsPerMonth: number
+}
+
+export const emptyPersonality: PersonalityDraft = {
+  hobbies: '',
+  bestAdvice: '',
+  womanAdmired: '',
+  askMeAbout: '',
+  meetingPref: null,
+  chatsPerMonth: 2,
+}
+
 /** Cached interest suggestions, keyed by the inputs that produced them. */
 export interface InterestSuggestions {
   key: string
@@ -54,11 +74,13 @@ interface OnboardingState {
   /** Sign-up Step 3: what she wants to learn, in rank order (index 0 = rank 1). */
   interests: string[]
   interestSuggestions: InterestSuggestions | null
+  personality: PersonalityDraft
   setBasics: (patch: Partial<BasicsDraft>) => void
   setResume: (resume: ResumeDraft | null) => void
   updateResume: (patch: Partial<ResumeDraft>) => void
   setInterests: (interests: string[]) => void
   setInterestSuggestions: (s: InterestSuggestions | null) => void
+  setPersonality: (patch: Partial<PersonalityDraft>) => void
   reset: () => void
 }
 
@@ -73,13 +95,26 @@ export const useOnboarding = create<OnboardingState>()(
       resume: null,
       interests: [],
       interestSuggestions: null,
+      personality: emptyPersonality,
       setBasics: (patch) => set((s) => ({ basics: { ...s.basics, ...patch } })),
       setResume: (resume) => set({ resume }),
       updateResume: (patch) => set((s) => (s.resume ? { resume: { ...s.resume, ...patch } } : s)),
       setInterests: (interests) => set({ interests }),
       setInterestSuggestions: (interestSuggestions) => set({ interestSuggestions }),
-      reset: () => set({ basics: emptyBasics, resume: null, interests: [], interestSuggestions: null }),
+      setPersonality: (patch) => set((s) => ({ personality: { ...s.personality, ...patch } })),
+      reset: () =>
+        set({ basics: emptyBasics, resume: null, interests: [], interestSuggestions: null, personality: emptyPersonality }),
     }),
-    { name: 'drip-onboarding', storage: createJSONStorage(() => sessionStorage) },
+    {
+      name: 'drip-onboarding',
+      storage: createJSONStorage(() => sessionStorage),
+      // Sanitize stored data on load so an out-of-range value can't get stuck in the form.
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<OnboardingState>
+        const personality = { ...emptyPersonality, ...p.personality }
+        personality.chatsPerMonth = clampChats(personality.chatsPerMonth)
+        return { ...current, ...p, personality }
+      },
+    },
   ),
 )
