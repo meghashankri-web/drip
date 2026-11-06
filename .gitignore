@@ -8,3 +8,4 @@ dist/
 server/uploads/*
 !server/uploads/.gitkeep
 .DS_Store
+demo/.chrome-demo-profile/

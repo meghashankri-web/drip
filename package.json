@@ -4,11 +4,13 @@
   "scripts": {
     "dev": "concurrently -n server,web -c magenta,cyan \"npm --prefix server run dev\" \"npm --prefix web run dev\"",
     "typecheck": "npm --prefix server run typecheck && npm --prefix web run typecheck",
-    "db:reset": "npm --prefix server run db:reset"
+    "db:reset": "npm --prefix server run db:reset",
+    "demo": "npm run db:reset && node demo/autoplay.mjs"
   },
   "type": "commonjs",
   "devDependencies": {
-    "concurrently": "^10.0.6"
+    "concurrently": "^10.0.6",
+    "puppeteer-core": "^25.16.0"
   },
   "private": true
 }
