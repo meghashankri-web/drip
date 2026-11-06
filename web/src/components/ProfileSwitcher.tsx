@@ -83,8 +83,10 @@ export default function ProfileSwitcher() {
         <Divider />
         <MenuItem
           onClick={() => {
+            // Sign out of the demo profile and show the welcome (landing) screen.
             setAnchor(null)
-            navigate('/signup/1')
+            setCurrentUserId(null)
+            navigate('/feed')
           }}
         >
           <ListItemIcon>

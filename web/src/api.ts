@@ -57,6 +57,14 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return (await res.json()) as T
 }
 
+export interface ResumeAnalysis {
+  summary: string
+  experienceTags: string[]
+  careerStage: CareerStage
+  resumeText: string
+  file: { id: string; name: string }
+}
+
 export interface ZipInfo {
   zip: string
   city: string
@@ -68,6 +76,11 @@ export const api = {
   listUsers: () => request<UserSummary[]>('/users'),
   getUser: (id: number) => request<UserProfile>(`/users/${id}`),
   lookupZip: (zip: string) => request<ZipInfo>(`/zips/${encodeURIComponent(zip)}`),
+  analyzeResume: (file: File) => {
+    const body = new FormData()
+    body.append('resume', file)
+    return request<ResumeAnalysis>('/resume/analyze', { method: 'POST', body })
+  },
   emailAvailable: (email: string) =>
     request<{ available: boolean }>(`/users/email-available?email=${encodeURIComponent(email)}`),
 }

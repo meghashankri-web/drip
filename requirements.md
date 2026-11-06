@@ -396,3 +396,5 @@ Build the steps in order. Each step has to pass its **Done when** checks before 
 10. **API key** lives in `server/.env` as `ANTHROPIC_API_KEY` and is never committed.
 11. **Demo ZIP** is 94720 (UC Berkeley). Seed users are spread from the same ZIP out to across the US so distance ranking is visible.
 12. **Seed avatars** are illustrated (DiceBear "Personas", CC BY 4.0), generated locally at seed time. Seed resumes are plain text in `server/db/seed-data.json`; no Claude calls happen during seeding.
+13. **Resume formats:** PDF goes to Claude as a document, DOCX is read with `mammoth`, legacy `.doc` is converted with macOS's built-in `textutil` (so `.doc` support needs a Mac server), and TXT is read directly. Uploaded resumes are saved under `server/uploads/resumes/` and linked to the account in Step 7. If analysis is unavailable, members can enter their summary, tags and career stage by hand.
+14. **Refusal fallback:** the resume call sets `fallbacks: "default"` (beta `server-side-fallback-2026-07-01`), so a rare safety-classifier decline is retried on Anthropic's recommended model instead of failing.

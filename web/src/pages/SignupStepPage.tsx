@@ -1,15 +1,18 @@
-import { Link as RouterLink, useParams } from 'react-router-dom'
+import { Link as RouterLink, Navigate, useParams } from 'react-router-dom'
 import { Box, Button, Card, CardContent, Stack, Step, StepLabel, Stepper, Typography } from '@mui/material'
 import type { StepIconProps } from '@mui/material/StepIcon'
 import CheckIcon from '@mui/icons-material/Check'
 import { brand } from '../theme'
 import NotFoundPage from './NotFoundPage'
 import BasicsStep from '../signup/BasicsStep'
+import ResumeStep from '../signup/ResumeStep'
+import { isBasicsFilled, isResumeComplete } from '../signup/resume'
+import { useOnboarding } from '../store/onboarding'
 import { SIGNUP_STEPS } from '../constants'
 
 const STEP_INFO: Record<number, { title: string; subtitle?: string; buildStep: number }> = {
   1: { title: 'Tell us about you', subtitle: 'The basics, so other members know who they’re meeting.', buildStep: 3 },
-  2: { title: 'Your resume & experience', buildStep: 4 },
+  2: { title: 'Your resume & experience', subtitle: 'Upload your resume and Claude will draft your profile. You stay in control of every word.', buildStep: 4 },
   3: { title: 'What do you want to explore?', buildStep: 5 },
   4: { title: 'Personality & meeting preferences', buildStep: 6 },
   5: { title: 'Review & create account', buildStep: 7 },
@@ -58,7 +61,12 @@ function ComingSoon({ step, buildStep }: { step: number; buildStep: number }) {
 export default function SignupStepPage() {
   const step = Number(useParams().step)
   const info = STEP_INFO[step]
+  const basics = useOnboarding((s) => s.basics)
+  const resume = useOnboarding((s) => s.resume)
   if (!info) return <NotFoundPage />
+  // Deep links skip ahead only as far as the steps already completed.
+  if (step >= 2 && !isBasicsFilled(basics)) return <Navigate to="/signup/1" replace />
+  if (step >= 3 && !isResumeComplete(resume)) return <Navigate to="/signup/2" replace />
 
   return (
     <Stack spacing={3}>
@@ -78,7 +86,7 @@ export default function SignupStepPage() {
         </Typography>
         {info.subtitle && <Typography color="text.secondary">{info.subtitle}</Typography>}
       </Stack>
-      {step === 1 ? <BasicsStep /> : <ComingSoon step={step} buildStep={info.buildStep} />}
+      {step === 1 ? <BasicsStep /> : step === 2 ? <ResumeStep /> : <ComingSoon step={step} buildStep={info.buildStep} />}
     </Stack>
   )
 }

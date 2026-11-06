@@ -1,0 +1,25 @@
+KIARA BROOKS
+Atlanta, GA | kiara.brooks@example.com
+
+EDUCATION
+Georgia Institute of Technology - B.S. Computer Science (expected May 2027)
+Concentration: Intelligence (Machine Learning). GPA 3.7. Dean's List.
+
+EXPERIENCE
+Data Science Intern - Peachtree Analytics (Summer 2026)
+- Built a churn-prediction model in Python (scikit-learn) that flagged 70% of at-risk customers
+- Created Tableau dashboards for the customer success team
+
+Undergraduate Researcher - Georgia Tech Health Informatics Lab (2025-present)
+- Cleaning and analyzing wearable-sensor data to detect early signs of fatigue
+- Co-presenting a poster at the Georgia Tech Undergraduate Research Symposium
+
+LEADERSHIP
+President - Black in Computing at Georgia Tech (2025-present)
+- Grew membership from 40 to 150; organized a 200-person hackathon
+
+Tutor - College of Computing (2024-present)
+- Tutor intro programming (Python) for 10+ students per semester
+
+SKILLS
+Python, pandas, scikit-learn, SQL, Tableau, Git, public speaking, event organizing

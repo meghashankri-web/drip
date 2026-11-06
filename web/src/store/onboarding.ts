@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import type { CareerStage } from '../api'
 
 /** Sign-up Step 1 answers. */
 export interface BasicsDraft {
@@ -29,9 +30,23 @@ export const emptyBasics: BasicsDraft = {
   identifiesAsWoman: false,
 }
 
+/** Sign-up Step 2: resume + Claude's analysis, as edited by the user. */
+export interface ResumeDraft {
+  /** Uploaded file saved on the server (null when entered by hand). */
+  file: { id: string; name: string } | null
+  source: 'claude' | 'manual'
+  summary: string
+  experienceTags: string[]
+  careerStage: CareerStage | null
+  resumeText: string
+}
+
 interface OnboardingState {
   basics: BasicsDraft
+  resume: ResumeDraft | null
   setBasics: (patch: Partial<BasicsDraft>) => void
+  setResume: (resume: ResumeDraft | null) => void
+  updateResume: (patch: Partial<ResumeDraft>) => void
   reset: () => void
 }
 
@@ -43,8 +58,11 @@ export const useOnboarding = create<OnboardingState>()(
   persist(
     (set) => ({
       basics: emptyBasics,
+      resume: null,
       setBasics: (patch) => set((s) => ({ basics: { ...s.basics, ...patch } })),
-      reset: () => set({ basics: emptyBasics }),
+      setResume: (resume) => set({ resume }),
+      updateResume: (patch) => set((s) => (s.resume ? { resume: { ...s.resume, ...patch } } : s)),
+      reset: () => set({ basics: emptyBasics, resume: null }),
     }),
     { name: 'drip-onboarding', storage: createJSONStorage(() => sessionStorage) },
   ),
