@@ -28,9 +28,9 @@ export default function AppLayout() {
   return (
     <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
       <AppBar position="sticky" color="primary">
-        <Toolbar sx={{ maxWidth: CONTENT_MAX_WIDTH, width: '100%', mx: 'auto', px: { xs: 2 } }}>
+        <Toolbar sx={{ maxWidth: CONTENT_MAX_WIDTH, width: '100%', mx: 'auto', px: { xs: 2 }, minHeight: { xs: 84 } }}>
           <Box component={RouterLink} to="/feed" aria-label="Drip home" sx={{ display: 'flex' }}>
-            <Logo height={34} />
+            <Logo height={60} />
           </Box>
           <Box sx={{ flexGrow: 1 }} />
           <ProfileSwitcher />
@@ -50,7 +50,7 @@ export default function AppLayout() {
         square
         sx={{
           position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: (t) => t.zIndex.appBar,
-          borderTop: 1, borderColor: 'divider', pb: 'env(safe-area-inset-bottom)',
+          borderTop: 2, borderColor: 'primary.main', pb: 'env(safe-area-inset-bottom)',
         }}
       >
         <BottomNavigation

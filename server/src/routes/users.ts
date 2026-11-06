@@ -51,6 +51,18 @@ export function usersRouter(db: DB): Router {
     )
   })
 
+  const emailExists = db.prepare('SELECT 1 FROM users WHERE email = ? COLLATE NOCASE')
+
+  /** Sign-up helper: is this email free? (Mock auth, so revealing this is acceptable.) */
+  router.get('/email-available', (req, res) => {
+    const email = typeof req.query.email === 'string' ? req.query.email.trim() : ''
+    if (!email) {
+      res.status(400).json({ error: 'email is required' })
+      return
+    }
+    res.json({ available: !emailExists.get(email) })
+  })
+
   /** Public profile. Never includes email or password. */
   router.get('/:id', (req, res) => {
     const id = Number(req.params.id)

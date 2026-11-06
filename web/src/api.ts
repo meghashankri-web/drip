@@ -57,8 +57,17 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return (await res.json()) as T
 }
 
+export interface ZipInfo {
+  zip: string
+  city: string
+  state: string
+}
+
 export const api = {
   health: () => request<{ ok: boolean }>('/health'),
   listUsers: () => request<UserSummary[]>('/users'),
   getUser: (id: number) => request<UserProfile>(`/users/${id}`),
+  lookupZip: (zip: string) => request<ZipInfo>(`/zips/${encodeURIComponent(zip)}`),
+  emailAvailable: (email: string) =>
+    request<{ available: boolean }>(`/users/email-available?email=${encodeURIComponent(email)}`),
 }

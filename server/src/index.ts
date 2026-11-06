@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import { openDb, UPLOADS_DIR } from './db.js'
 import { ensureSeeded } from '../db/seed.js'
 import { usersRouter } from './routes/users.js'
+import { zipsRouter } from './routes/zips.js'
 
 fs.mkdirSync(UPLOADS_DIR, { recursive: true })
 const db = openDb()
@@ -19,6 +20,7 @@ app.get('/api/health', (_req, res) => {
   res.json({ ok: true })
 })
 app.use('/api/users', usersRouter(db))
+app.use('/api/zips', zipsRouter(db))
 
 app.use('/api', (_req, res) => {
   res.status(404).json({ error: 'Not found' })

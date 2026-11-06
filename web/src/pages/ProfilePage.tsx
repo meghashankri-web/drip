@@ -4,6 +4,7 @@ import WavesIcon from '@mui/icons-material/Waves'
 import { useSession } from '../store/session'
 import { useUser } from '../hooks'
 import NotFoundPage from './NotFoundPage'
+import { brand, hardShadow } from '../theme'
 
 /** /profile (you) or /profile/:id (someone else). The full profile arrives in Step 7. */
 export default function ProfilePage() {
@@ -18,7 +19,7 @@ export default function ProfilePage() {
   if (loading || !user) {
     return (
       <Stack spacing={2} sx={{ pt: 2, alignItems: 'center' }}>
-        <Skeleton variant="circular" width={112} height={112} />
+        <Skeleton variant="rounded" width={120} height={120} />
         <Skeleton width={180} height={40} />
         <Skeleton variant="rounded" width="100%" height={120} />
       </Stack>
@@ -29,8 +30,12 @@ export default function ProfilePage() {
 
   return (
     <Stack spacing={2}>
-      <Stack spacing={1} sx={{ pt: 1, alignItems: 'center' }}>
-        <Avatar src={user.photoUrl ?? undefined} alt="" sx={{ width: 112, height: 112 }} />
+      <Stack spacing={1.5} sx={{ pt: 1, alignItems: 'center' }}>
+        <Avatar
+          src={user.photoUrl ?? undefined}
+          alt=""
+          sx={{ width: 120, height: 120, border: 2, borderColor: 'primary.main', boxShadow: hardShadow(5, brand.terracotta) }}
+        />
         <Typography variant="h4" component="h1" sx={{ textAlign: 'center' }}>
           {user.firstName} {user.lastName}
         </Typography>

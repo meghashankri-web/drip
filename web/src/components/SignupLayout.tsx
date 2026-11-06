@@ -7,8 +7,8 @@ import { CONTENT_MAX_WIDTH } from '../constants'
 export default function SignupLayout() {
   return (
     <Box sx={{ minHeight: '100dvh' }}>
-      <Box sx={{ bgcolor: 'primary.main', py: 2, display: 'flex', justifyContent: 'center' }}>
-        <Logo height={44} />
+      <Box sx={{ bgcolor: 'primary.main', py: 2.5, display: 'flex', justifyContent: 'center' }}>
+        <Logo height={72} />
       </Box>
       <Box component="main" sx={{ maxWidth: CONTENT_MAX_WIDTH, mx: 'auto', px: 2, py: 3 }}>
         <Outlet />

@@ -37,13 +37,16 @@ export default function ProfileSwitcher() {
         aria-label="Switch demo profile"
         aria-haspopup="menu"
         endIcon={<ExpandMoreIcon />}
-        sx={{ color: brand.cream, pl: 0.5, pr: 1.5, '&:hover': { bgcolor: 'rgba(252,249,242,0.12)' } }}
+        sx={{
+          color: brand.cream, pl: 0.75, pr: 1.25, border: `1.5px solid ${brand.cream}`, borderRadius: 1,
+          '&:hover': { bgcolor: 'rgba(252,249,242,0.12)' },
+        }}
       >
-        <Avatar src={me?.photoUrl ?? undefined} alt="" sx={{ width: 32, height: 32, mr: 1, bgcolor: brand.latte }}>
+        <Avatar src={me?.photoUrl ?? undefined} alt="" sx={{ width: 30, height: 30, mr: 1, bgcolor: brand.latte }}>
           {me?.firstName[0]}
         </Avatar>
         <Typography component="span" noWrap sx={{ maxWidth: 120, fontWeight: 600 }}>
-          {me ? me.firstName : 'Choose profile'}
+          {me ? me.firstName : 'Profiles'}
         </Typography>
       </Button>
 
