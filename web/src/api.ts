@@ -56,6 +56,9 @@ export interface FeedCard {
   experienceTags: string[]
   interestTags: string[]
   funFact: { label: string; text: string } | null
+  /** Her experience that matches my interests, in my rank order. */
+  matchedInterests: string[]
+  score: { total: number; proximity: number; experience: number; shared: number }
 }
 
 export interface CreateUserBody {

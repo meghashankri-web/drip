@@ -154,6 +154,13 @@ export default function SwipeCard({ card, onPass, onCoffee }: {
             </Box>
           </Stack>
 
+          {card.matchedInterests.length > 0 && (
+            <Box data-testid="match-reason" sx={{ mt: 2, px: 1.5, py: 1, bgcolor: brand.espresso, color: brand.cream, borderRadius: 0.5 }}>
+              <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                ★ Can help with your interest{card.matchedInterests.length > 1 ? 's' : ''}: {card.matchedInterests.join(', ')}
+              </Typography>
+            </Box>
+          )}
           <Box sx={{ mt: 2 }}>
             <Typography variant="overline" sx={{ color: 'text.secondary', lineHeight: 1.6, display: 'block' }}>Can help with</Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>

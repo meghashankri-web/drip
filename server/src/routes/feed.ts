@@ -3,6 +3,7 @@ import { z } from 'zod'
 import type { DB } from '../db.js'
 import { distanceMiles } from '../geo.js'
 import { getViewerId } from '../viewer.js'
+import { scoreCandidate } from '../matching.js'
 
 export const FEED_LIMIT = 20
 
@@ -86,11 +87,21 @@ export function feedRouter(db: DB): Router {
     }
     const rows = listCandidates.all({ me, now: new Date().toISOString() }) as CandidateRow[]
     const tags = (rows: unknown[]) => (rows as { tag: string }[]).map((r) => r.tag)
-    const cards = rows.slice(0, FEED_LIMIT).map((r) => {
-      const miles =
-        viewer.lat !== null && viewer.lng !== null && r.lat !== null && r.lng !== null
-          ? distanceMiles(viewer.lat, viewer.lng, r.lat, r.lng)
-          : null
+    const mine = { experienceTags: tags(experienceFor.all(me)), interestTags: tags(interestsFor.all(me)) }
+
+    // Score everyone, best match first (Step 9), then keep the top 20.
+    const scored = rows
+      .map((r) => {
+        const miles =
+          viewer.lat !== null && viewer.lng !== null && r.lat !== null && r.lng !== null
+            ? distanceMiles(viewer.lat, viewer.lng, r.lat, r.lng)
+            : null
+        const theirs = { experienceTags: tags(experienceFor.all(r.id)), interestTags: tags(interestsFor.all(r.id)) }
+        return { r, miles, theirs, score: scoreCandidate(mine, theirs, miles) }
+      })
+      .sort((a, b) => b.score.total - a.score.total || a.r.id - b.r.id)
+
+    const cards = scored.slice(0, FEED_LIMIT).map(({ r, miles, theirs, score }) => {
       return {
         id: r.id,
         firstName: r.first_name,
@@ -102,9 +113,15 @@ export function feedRouter(db: DB): Router {
         city: r.city,
         state: r.state,
         distanceMiles: miles === null ? null : Math.round(miles * 10) / 10,
-        experienceTags: tags(experienceFor.all(r.id)).slice(0, 4),
-        interestTags: tags(interestsFor.all(r.id)).slice(0, 3),
+        // Matching experience first, so the card shows why she's a good fit.
+        experienceTags: [
+          ...score.matchedInterests.map((m) => theirs.experienceTags.find((t) => t.toLowerCase() === m.toLowerCase()) ?? m),
+          ...theirs.experienceTags.filter((t) => !score.matchedInterests.some((m) => m.toLowerCase() === t.toLowerCase())),
+        ].slice(0, 4),
+        interestTags: theirs.interestTags.slice(0, 3),
         funFact: pickFunFact(r),
+        matchedInterests: score.matchedInterests,
+        score, // debug breakdown: total, proximity, experience, shared
       }
     })
     res.json({ cards, remaining: Math.max(0, rows.length - cards.length) })
