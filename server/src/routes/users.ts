@@ -48,7 +48,7 @@ const CreateUser = z.object({
 const hasDuplicates = (tags: string[]) => new Set(tags.map((t) => t.toLowerCase())).size !== tags.length
 
 /** Decodes a JPEG/PNG/WebP data URL and checks the bytes really are that image type. */
-function decodePhoto(dataUrl: string): { buffer: Buffer; ext: string } | null {
+export function decodePhoto(dataUrl: string): { buffer: Buffer; ext: string } | null {
   const m = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$/.exec(dataUrl)
   if (!m) return null
   const buffer = Buffer.from(m[2]!, 'base64')

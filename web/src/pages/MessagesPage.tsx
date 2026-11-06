@@ -11,6 +11,7 @@ import { errorMessage } from '../hooks'
 import { useSession } from '../store/session'
 import { brand } from '../theme'
 import { googleCalendarUrl } from '../messages/calendar'
+import PromptBody from '../messages/PromptBody'
 
 const when = (iso: string) =>
   new Date(iso).toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
@@ -101,15 +102,30 @@ function MessageCard({ m, me, onChanged }: { m: InboxMessage; me: number | null;
                 {m.type === 'accepted' && m.meeting && m.from && (
                   <Box sx={{ mt: 1.5 }}>
                     <MeetingBox meeting={m.meeting} />
-                    <Box sx={{ mt: 1.5 }}><CalendarButton meeting={m.meeting} otherName={m.from.firstName} /></Box>
+                    <Stack direction="row" spacing={1} useFlexGap sx={{ mt: 1.5, flexWrap: 'wrap' }}>
+                      <CalendarButton meeting={m.meeting} otherName={m.from.firstName} />
+                      <SimulateButton meetingId={m.meeting.id} onDone={onChanged} />
+                    </Stack>
                   </Box>
                 )}
+                {m.type === 'post_meeting_prompt' && m.prompt && <PromptBody prompt={m.prompt} onChanged={onChanged} />}
               </>
             )}
           </Box>
         </Stack>
       </CardContent>
     </Card>
+  )
+}
+
+/** Demo control: pretend the meeting time has passed so the "did it happen?" prompt appears now. */
+function SimulateButton({ meetingId, onDone }: { meetingId: number; onDone: () => void }) {
+  const [busy, setBusy] = useState(false)
+  return (
+    <Button size="small" variant="outlined" disabled={busy} data-testid="simulate-passed"
+      onClick={() => { setBusy(true); api.simulateMeetingPassed(meetingId).then(onDone).finally(() => setBusy(false)) }}>
+      Demo: simulate meeting passed
+    </Button>
   )
 }
 
@@ -197,7 +213,10 @@ function RequestBody({ m, me: _me, onChanged }: { m: InboxMessage; me: number | 
         <Stack spacing={1.5}>
           <Chip label="Accepted" color="success" sx={{ alignSelf: 'flex-start' }} />
           <MeetingBox meeting={m.meeting} />
-          <Box><CalendarButton meeting={m.meeting} otherName={from.firstName} note={r.message} /></Box>
+          <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap' }}>
+            <CalendarButton meeting={m.meeting} otherName={from.firstName} note={r.message} />
+            <SimulateButton meetingId={m.meeting.id} onDone={onChanged} />
+          </Stack>
         </Stack>
       )}
       {r.status === 'not_now' && <Chip label="Not now · she’ll reappear in your feed in 30 days" sx={{ alignSelf: 'flex-start', textTransform: 'none' }} />}

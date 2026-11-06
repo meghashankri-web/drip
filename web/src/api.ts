@@ -79,6 +79,12 @@ export interface InboxMessage {
   from: { id: number; firstName: string; lastName: string; photoUrl: string | null } | null
   request: { id: number; status: string; message: string; availability: Slot[]; createdAt: string } | null
   meeting: Meeting | null
+  prompt: {
+    meetingId: number; datetime: string; location: string
+    other: { id: number; firstName: string; photoUrl: string | null }
+    answer: 'yes' | 'no' | null
+    posted: boolean
+  } | null
 }
 
 export interface CreateUserBody {
@@ -172,6 +178,15 @@ export const api = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
+    }),
+  simulateMeetingPassed: (meetingId: number) => request<{ ok: true }>(`/meetings/${meetingId}/simulate-passed`, { method: 'POST' }),
+  confirmMeeting: (meetingId: number, body: { happened: boolean; explanation?: string }) =>
+    request<{ ok: true; rippleCount: number }>(`/meetings/${meetingId}/confirm`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    }),
+  createPost: (meetingId: number, body: { caption: string; photoDataUrl: string | null }) =>
+    request<{ id: number }>(`/meetings/${meetingId}/post`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
     }),
   undoSwipe: (targetUserId: number) => request<{ ok: true }>(`/swipes/${targetUserId}`, { method: 'DELETE' }),
   createUser: (body: CreateUserBody) =>
