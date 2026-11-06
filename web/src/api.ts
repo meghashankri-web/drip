@@ -69,6 +69,18 @@ export interface Insight {
 
 export type Slot = { day: string; block: string }
 
+export interface Meeting { id: number; datetime: string; location: string }
+export interface InboxMessage {
+  id: number
+  type: 'chat_request' | 'accepted' | 'not_now' | 'declined' | 'cheers' | 'post_meeting_prompt' | 'system'
+  body: string
+  readAt: string | null
+  createdAt: string
+  from: { id: number; firstName: string; lastName: string; photoUrl: string | null } | null
+  request: { id: number; status: string; message: string; availability: Slot[]; createdAt: string } | null
+  meeting: Meeting | null
+}
+
 export interface CreateUserBody {
   basics: {
     firstName: string; lastName: string; email: string; password: string; zip: string; birthYear: number
@@ -149,6 +161,14 @@ export const api = {
   getInsight: (userId: number) => request<Insight>(`/requests/insight/${userId}`),
   sendRequest: (body: { toUserId: number; message: string; availability: Slot[] }) =>
     request<{ id: number }>('/requests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
+  listMessages: () => request<InboxMessage[]>('/messages'),
+  markAllRead: () => request<{ ok: true }>('/messages/read-all', { method: 'POST' }),
+  respond: (requestId: number, body: { action: 'accept'; datetime: string; location: string } | { action: 'not_now' | 'decline' }) =>
+    request<{ status: string }>(`/messages/requests/${requestId}/respond`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),

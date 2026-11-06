@@ -9,6 +9,7 @@ import { resumeErrorHandler, resumeRouter } from './routes/resume.js'
 import { interestsRouter } from './routes/interests.js'
 import { feedRouter } from './routes/feed.js'
 import { requestsRouter } from './routes/requests.js'
+import { messagesRouter } from './routes/messages.js'
 
 fs.mkdirSync(UPLOADS_DIR, { recursive: true })
 const db = openDb()
@@ -28,6 +29,7 @@ app.use('/api/zips', zipsRouter(db))
 app.use('/api/resume', resumeRouter(), resumeErrorHandler)
 app.use('/api/interests', interestsRouter(db))
 app.use('/api/requests', requestsRouter(db))
+app.use('/api/messages', messagesRouter(db))
 app.use('/api', feedRouter(db))
 
 app.use('/api', (_req, res) => {
